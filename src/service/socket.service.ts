@@ -1,10 +1,12 @@
 import { sessionsMap } from "../config/sessionStore";
+import { getIO } from "../socket/init.socket";
 import {
   SessionCallType,
   SessionData,
   SessionRole,
   SessionStatus,
 } from "../types/types";
+
 
 export const handleJoinUser = (
   sessionCode: string,
@@ -20,6 +22,7 @@ export const handleJoinUser = (
   const session: SessionData | undefined = sessionsMap.get(sessionCode);
   if (!session) return;
   session.participants.set(socketId, participantData);
+  // needs to do api call for inserting in db
 };
 
 export const handleSessionCreation = (
@@ -32,5 +35,24 @@ export const handleSessionCreation = (
       status: SessionStatus.ACTIVE,
       participants: new Map(),
     });
+  }
+};
+
+export const handleDisconnectedUser = (socketId: string) => {
+  const io = getIO();
+  for (const [sessionCode, session] of sessionsMap.entries()) {
+    if (session.participants.has(socketId)) {
+      session.participants.delete(socketId);
+
+      io.to(sessionCode).emit("participants-updated", {
+        participants: Array.from(session.participants.values())
+      });
+
+      if (session.participants.size === 0) {
+        session.status = SessionStatus.ENDED;
+      }
+
+      break; // stop after removing
+    }
   }
 };
