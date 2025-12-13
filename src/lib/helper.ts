@@ -1,3 +1,4 @@
+import { SessionCallType } from "../types/types";
 import { CHARS } from "./constant";
 
 function randomPart(length: number): string {
@@ -10,4 +11,17 @@ function randomPart(length: number): string {
 
 export function generateSessionCode(): string {
   return `${randomPart(3)}-${randomPart(4)}-${randomPart(3)}`;
+}
+
+export function getMaxParticipants(callType: SessionCallType): number {
+  switch (callType) {
+    case SessionCallType.SFU:
+      return 10;
+
+    case SessionCallType.RTC:
+      return 5;
+
+    default:
+      return 5;
+  }
 }
