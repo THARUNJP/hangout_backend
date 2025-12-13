@@ -56,3 +56,7 @@ export const handleDisconnectedUser = (socketId: string) => {
     }
   }
 };
+
+export const handleLeaveSession = (sessionCode:string,socketId:string)=>{
+
+}
