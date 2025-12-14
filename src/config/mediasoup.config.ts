@@ -1,5 +1,6 @@
 import os from "os";
 import { RtpCodecCapability } from "mediasoup/node/lib/types";
+import { WorkerLogLevel, WorkerLogTag } from "../mediasoup/types";
 
 /**
  * Mediasoup configuration
@@ -7,7 +8,7 @@ import { RtpCodecCapability } from "mediasoup/node/lib/types";
  * No business logic here.
  */
 
-export const mediasoupConfig = {
+export const mediasoupConfig  = {
   /**
    * Worker settings
    * One worker can handle multiple routers (sessions)
@@ -20,7 +21,7 @@ export const mediasoupConfig = {
      * Log levels for debugging
      * In production, reduce this
      */
-    logLevel: "warn",
+    logLevel: "warn" as WorkerLogLevel,
     logTags: [
       "info",
       "ice",
@@ -28,7 +29,7 @@ export const mediasoupConfig = {
       "rtp",
       "srtp",
       "rtcp",
-    ],
+    ] as WorkerLogTag[],
   },
 
   /**
