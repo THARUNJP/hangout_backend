@@ -57,6 +57,30 @@ export const handleDisconnectedUser = (socketId: string) => {
   }
 };
 
-export const handleLeaveSession = (sessionCode:string,socketId:string)=>{
+export const handleLeaveSession = (sessionCode: string, socketId: string) => {
+  const io = getIO();
+  const session = sessionsMap.get(sessionCode);
 
-}
+  // If session doesn't exist or participant not found
+  if (!session || !session.participants.has(socketId)) return;
+
+  const participant = session.participants.get(socketId);
+
+  // Remove participant
+  session.participants.delete(socketId);
+
+  console.log(`User ${socketId} left session ${sessionCode}`);
+
+  // Notify remaining users
+  io.to(sessionCode).emit("participants-updated", {
+    participants: Array.from(session.participants.values()),
+    message: `${participant?.name ?? "A user"} has left the session`,
+  });
+
+  //clean up empty session
+  if (session.participants.size === 0) {
+    sessionsMap.delete(sessionCode);
+    console.log(`Session ${sessionCode} deleted (empty)`);
+  }
+};
+

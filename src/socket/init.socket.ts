@@ -3,6 +3,7 @@ import { Server as HttpServer } from "http";
 import {
   handleDisconnectedUser,
   handleJoinUser,
+  handleLeaveSession,
   handleSessionCreation,
 } from "../service/socket.service";
 
@@ -30,12 +31,19 @@ export default function initSocket(server: HttpServer): Server {
     // join session 
     socket.on("join-session", ({ sessionCode, participantName }) => {
       console.log("joining session", sessionCode, "name::", participantName,socket.id);
+      // Prevent duplicate joins
+      if (socket.rooms.has(sessionCode)) return;
+      // Join transport room first
+      socket.join(sessionCode);
+      // Then update business state
       handleJoinUser(sessionCode, participantName, socket.id);
     });
 
     //leave session 
     socket.on("leave-session", ({sessionCode}) => {
       console.log("Socket Left the session.....:", socket.id,sessionCode);
+      handleLeaveSession(sessionCode,socket.id)
+       socket.leave(sessionCode)
     });
 
     //disconnect
