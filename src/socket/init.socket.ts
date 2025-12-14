@@ -53,6 +53,17 @@ export default function initSocket(server: HttpServer): Server {
     });
   });
 
+   // Mediasoup namespace
+  const mediaNamespace = io.of("/mediasoup");
+
+  mediaNamespace.on("connection", (socket) => {
+    console.log("Mediasoup socket connected:", socket.id);
+
+    socket.on("disconnect", () => {
+      console.log("Mediasoup socket disconnected:", socket.id);
+    });
+  });
+
   return io;
 }
 

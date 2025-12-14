@@ -1,7 +1,7 @@
 import { Request, Response } from "express";
 import { SessionCallType, SessionStatus } from "../types/types";
 import { generateSessionCode, getMaxParticipants } from "../lib/helper";
-import executeQuery from "../config/db";
+import executeQuery from "../config/db.config";
 
 async function createSession(
   req: Request,
