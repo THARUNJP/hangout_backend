@@ -5,6 +5,16 @@ import * as mediasoup from "mediasoup";
 let workers: Worker[] = [];
 let nextWorkerIndex = 0;
 
+// mediasoup/
+//  ├── config.ts        ✅ DONE
+//  ├── index.ts        
+//  ├── worker.ts        ✅ DONE
+//  ├── router.ts        ⏭ NEXT (session ↔ router mapping)
+//  ├── transport.ts
+//  ├── producer.ts
+//  ├── consumer.ts
+
+
 export default async function createMediasoupWorkers(): Promise<void> {
   const { numWorkers, worker } = mediasoupConfig;
   console.log(`Starting ${numWorkers} mediasoup workers...`);
