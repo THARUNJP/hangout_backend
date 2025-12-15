@@ -19,3 +19,7 @@ export async function createRouter(
 
   return router;
 }
+
+export function getRouter(sessionCode: string): Router | undefined {
+  return routers.get(sessionCode);
+}
