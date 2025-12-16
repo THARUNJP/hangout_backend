@@ -1,3 +1,10 @@
+import type {
+  DtlsParameters,
+  IceCandidate,
+  IceParameters
+} from 'mediasoup/node/lib/types';
+
+
 export enum SessionCallType {
   RTC = "RTC",
   SFU = "SFU",
@@ -26,4 +33,12 @@ export interface SessionData {
   participants: Map<string, Participant>; // Key = socketId
   maxParticipants: number;
   status:SessionStatus
+}
+
+
+export interface WebRtcTransportInfo {
+  id: string;
+  iceParameters: IceParameters;
+  iceCandidates: IceCandidate[];
+  dtlsParameters: DtlsParameters;
 }
