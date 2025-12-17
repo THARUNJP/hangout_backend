@@ -3,6 +3,7 @@ import { getTransport } from "./transport";
 
 const producers = new Map<string, Map<string, Producer>>();
 
+// Create a producer (audio/video)
 export async function createProducer(
   socketId: string,
   kind: "audio" | "video",
@@ -34,6 +35,25 @@ export async function createProducer(
   };
 }
 
+//Get all producers except requester  & Used when a user joins
+export function getAllProducers(excludeSocketId: string) {
+  const list: { producerId: string; socketId: string }[] = [];
+
+  for (const [socketId, socketProducers] of producers.entries()) {
+    if (socketId === excludeSocketId) continue;
+
+    for (const producer of socketProducers.values()) {
+      list.push({
+        producerId: producer.id,
+        socketId,
+      });
+    }
+  }
+
+  return list;
+}
+
+//Get producer by id
 export function getProducerById(producerId: string): Producer | undefined {
   for (const socketProducers of producers.values()) {
     const producer = socketProducers.get(producerId);
@@ -42,6 +62,7 @@ export function getProducerById(producerId: string): Producer | undefined {
   return undefined;
 }
 
+//Cleanup producers for a socket
 export function closeProducers(socketId: string): void {
   const socketProducers = producers.get(socketId);
   if (!socketProducers) return;
