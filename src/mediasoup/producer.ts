@@ -34,6 +34,13 @@ export async function createProducer(
   };
 }
 
+export function getProducerById(producerId: string): Producer | undefined {
+  for (const socketProducers of producers.values()) {
+    const producer = socketProducers.get(producerId);
+    if (producer) return producer;
+  }
+  return undefined;
+}
 
 export function closeProducers(socketId: string): void {
   const socketProducers = producers.get(socketId);
