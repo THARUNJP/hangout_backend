@@ -75,10 +75,21 @@ export default function initSocket(server: HttpServer): Server {
       return;
     }
     console.log("Mediasoup socket connected:", socket.id, sessionCode);
-    socket.on("get-rtp-capabilities", () => {
+    socket.on("get-rtp-capabilities", (callback) => {
+      if(typeof callback !== "function") return;
       console.log("...rtp capabilities");
-      
-      handleGetRtpCapabilities(sessionCode);
+      const router = handleGetRtpCapabilities(sessionCode);
+      if (!router) {
+        return callback({
+          status: false,
+          message: "Router not found",
+        });
+      }
+      callback({
+        status:true,
+        data:router,
+        message:"rtp capabilties sent"
+      })
     });
   });
 

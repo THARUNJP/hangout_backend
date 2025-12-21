@@ -17,9 +17,9 @@ export const createRouterSession = async (sessionCode: string) => {
 export const handleGetRtpCapabilities = (sessionCode: string) => {
   try {
     const router = getRouterRtpCapabilities(sessionCode);
-    console.log(router);
     return router;
   } catch (err) {
     console.log(err);
+    return null;
   }
 };
