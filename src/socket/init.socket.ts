@@ -12,7 +12,6 @@ import {
   handleGetRtpCapabilities,
 } from "../service/media.service";
 import { getRouter } from "../mediasoup";
-import { createWebRtcTransport } from "../mediasoup/transport";
 
 let io: Server;
 
