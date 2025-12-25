@@ -23,7 +23,7 @@ export const handleJoinUser = (
   if (!session) return;
   session.participants.set(socketId, participantData);
 
-  io.to(sessionCode).emit("participants-updated", {
+  io.to(sessionCode).except(socketId).emit("participants-updated", {
     participants: Array.from(session.participants.values()),
     message: `${name ?? "A user"} has joined the session`,
   });
