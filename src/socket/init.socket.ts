@@ -70,6 +70,15 @@ export default function initSocket(server: HttpServer): Server {
 
   mediaNamespace.on("connection", (socket) => {
     console.log("Mediasoup socket connected:", socket.id);
+    socket.on("join-media", ({ sessionCode }, callback) => {
+      if (!sessionCode) {
+        return callback({ status: false, message: "sessionCode required" });
+      }
+
+      socket.data.sessionCode = sessionCode;
+      callback({ status: true });
+    });
+
     // socket.on("get-rtp-capabilities", (callback) => {
     //   if (typeof callback !== "function") return;
     //   console.log("...rtp capabilities");
