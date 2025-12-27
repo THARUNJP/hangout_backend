@@ -14,6 +14,7 @@ import {
 import {
   connectTransport,
   createProducer,
+  createRecvTransport,
   getRouter,
   getTransport,
 } from "../mediasoup";
@@ -148,6 +149,30 @@ export default function initSocket(server: HttpServer): Server {
         callback({ status: true, id: producer.id });
       } catch (err: any) {
         console.log("create producer failed:", err);
+        callback({ status: false, message: err.message });
+      }
+    });
+
+    socket.on("create-recv-transport", async (callback) => {
+      try {
+        const { sessionCode } = socket.data;
+        const router = getRouter(sessionCode);
+
+        if (!router) {
+          return callback({
+            status: false,
+            message: "No router found for the session",
+          });
+        }
+
+        const transportInfo = await createRecvTransport(socket.id, router);
+
+        callback({
+          status: true,
+          ...transportInfo,
+        });
+      } catch (err: any) {
+        console.error("create-recv-transport failed:", err);
         callback({ status: false, message: err.message });
       }
     });
