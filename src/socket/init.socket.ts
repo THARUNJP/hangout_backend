@@ -8,6 +8,7 @@ import {
 } from "../service/socket.service";
 import {
   createRouterSession,
+  getProducers,
   handleCreateSendTransport,
   handleGetRtpCapabilities,
 } from "../service/media.service";
@@ -16,6 +17,7 @@ import {
   createConsumer,
   createProducer,
   createRecvTransport,
+  getAllProducers,
   getRouter,
   getTransport,
 } from "../mediasoup";
@@ -82,9 +84,12 @@ export default function initSocket(server: HttpServer): Server {
         return callback({ status: false, message: "sessionCode required" });
       }
       socket.join(sessionCode);
-      console.log(socket.id, "media joined success", sessionCode);
+      console.log(socket.id, "media joined success", sessionCode, socket.rooms);
 
       socket.data.sessionCode = sessionCode;
+      const existingProducers = getAllProducers(socket.id);
+      console.log(";;;Producers", existingProducers);
+
       callback({ status: true });
     });
 
@@ -135,6 +140,7 @@ export default function initSocket(server: HttpServer): Server {
     socket.on(
       "connect-transport",
       async ({ transportType, dtlsParameters }, callback) => {
+        console.log("........comes here connect-transport");
         try {
           await connectTransport(socket.id, transportType, dtlsParameters);
           callback({ status: true });
@@ -147,8 +153,17 @@ export default function initSocket(server: HttpServer): Server {
 
     socket.on("produce", async ({ kind, rtpParameters }, callback) => {
       try {
+        console.log("........comes here produce-transport");
+
         const { sessionCode } = socket.data;
         const producer = await createProducer(socket.id, kind, rtpParameters);
+        console.log("........comes here produce-transport ......2");
+        const room = mediaNamespace.adapter.rooms.get(sessionCode);
+        console.log(
+          "ROOM MEMBERS:",
+          room ? [...room] : "NO ROOM",
+          getAllProducers(socket.id)
+        );
         socket.to(sessionCode).except(socket.id).emit("new-producer", {
           producerId: producer.id,
           kind: producer.kind,

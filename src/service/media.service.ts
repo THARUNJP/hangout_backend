@@ -3,11 +3,10 @@ import {
   getMediasoupWorker,
   getRouterRtpCapabilities,
 } from "../mediasoup";
-import { Router } from "mediasoup/node/lib/types";
+import { Producer, Router } from "mediasoup/node/lib/types";
 
-import {
-  createSendTransport,
-} from "../mediasoup/transport";
+import { createSendTransport } from "../mediasoup/transport";
+import { producers } from "../mediasoup/producer";
 
 export const createRouterSession = async (sessionCode: string) => {
   try {
@@ -40,4 +39,10 @@ export const handleCreateSendTransport = async (
     console.log(err);
     return null;
   }
+};
+
+export const getProducers = (
+  sessionCode: string
+): Map<string, Producer> | undefined => {
+  return producers.get(sessionCode);
 };

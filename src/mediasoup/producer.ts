@@ -1,7 +1,7 @@
 import { Producer, RtpParameters } from "mediasoup/node/lib/types";
 import { getTransport } from "./transport";
 
-const producers = new Map<string, Map<string, Producer>>();
+export const producers = new Map<string, Map<string, Producer>>();
 
 // Create a producer (audio/video)
 export async function createProducer(
