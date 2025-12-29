@@ -21,6 +21,7 @@ import {
   getRouter,
   getTransport,
 } from "../mediasoup";
+import { producers } from "../mediasoup/producer";
 
 let io: Server;
 
@@ -100,7 +101,7 @@ export default function initSocket(server: HttpServer): Server {
       const existingProducers = getAllProducers(peerSocketIds);
       console.log(";;;Producers", existingProducers);
 
-      callback({ status: true });
+      callback({ status: true, producers: existingProducers });
     });
 
     socket.on("get-rtp-capabilities", (callback) => {
@@ -169,10 +170,7 @@ export default function initSocket(server: HttpServer): Server {
         const producer = await createProducer(socket.id, kind, rtpParameters);
         console.log("........comes here produce-transport ......2");
         const room = mediaNamespace.adapter.rooms.get(sessionCode);
-        console.log(
-          "ROOM MEMBERS:",
-          room ? [...room] : "NO ROOM"
-        );
+        console.log("ROOM MEMBERS:", room ? [...room] : "NO ROOM");
         socket.to(sessionCode).except(socket.id).emit("new-producer", {
           producerId: producer.id,
           kind: producer.kind,
