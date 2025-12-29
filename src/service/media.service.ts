@@ -5,7 +5,9 @@ import {
 } from "../mediasoup";
 import { Router } from "mediasoup/node/lib/types";
 
-import { createWebRtcTransport } from "../mediasoup/transport";
+import {
+  createSendTransport,
+} from "../mediasoup/transport";
 
 export const createRouterSession = async (sessionCode: string) => {
   try {
@@ -27,9 +29,12 @@ export const handleGetRtpCapabilities = (sessionCode: string) => {
   }
 };
 
-export const handleCreateTransport = async (router: Router) => {
+export const handleCreateSendTransport = async (
+  router: Router,
+  socketId: string
+) => {
   try {
-    const transport = await createWebRtcTransport(router);
+    const transport = await createSendTransport(socketId, router);
     return transport;
   } catch (err) {
     console.log(err);

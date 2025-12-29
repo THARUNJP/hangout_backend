@@ -8,7 +8,7 @@ import {
 } from "../service/socket.service";
 import {
   createRouterSession,
-  handleCreateTransport,
+  handleCreateSendTransport,
   handleGetRtpCapabilities,
 } from "../service/media.service";
 import {
@@ -81,6 +81,7 @@ export default function initSocket(server: HttpServer): Server {
       if (!sessionCode) {
         return callback({ status: false, message: "sessionCode required" });
       }
+      socket.join(sessionCode);
       console.log(socket.id, "media joined success", sessionCode);
 
       socket.data.sessionCode = sessionCode;
@@ -116,7 +117,7 @@ export default function initSocket(server: HttpServer): Server {
           message: "No router found for the session",
         });
       }
-      const transport = await handleCreateTransport(router);
+      const transport = await handleCreateSendTransport(router, socket.id);
       if (!transport)
         return callback({
           status: false,
@@ -146,7 +147,12 @@ export default function initSocket(server: HttpServer): Server {
 
     socket.on("produce", async ({ kind, rtpParameters }, callback) => {
       try {
+        const { sessionCode } = socket.data;
         const producer = await createProducer(socket.id, kind, rtpParameters);
+        socket.to(sessionCode).except(socket.id).emit("new-producer", {
+          producerId: producer.id,
+          kind: producer.kind,
+        });
         callback({ status: true, id: producer.id });
       } catch (err: any) {
         console.log("create producer failed:", err);

@@ -2,7 +2,7 @@ import { WebRtcTransport, Router } from "mediasoup/node/lib/types";
 import { mediasoupConfig } from "../config/mediasoup.config";
 import { WebRtcTransportInfo } from "../types/types";
 
-const transports = new Map<
+export const transports = new Map<
   string,
   { send?: WebRtcTransport; recv?: WebRtcTransport }
 >();
