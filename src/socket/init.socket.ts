@@ -87,7 +87,17 @@ export default function initSocket(server: HttpServer): Server {
       console.log(socket.id, "media joined success", sessionCode, socket.rooms);
 
       socket.data.sessionCode = sessionCode;
-      const existingProducers = getAllProducers(socket.id);
+      const room = mediaNamespace.adapter.rooms.get(sessionCode);
+      const peerSocketIds: string[] = [];
+
+      if (room) {
+        for (const id of room) {
+          if (id !== socket.id) {
+            peerSocketIds.push(id);
+          }
+        }
+      }
+      const existingProducers = getAllProducers(peerSocketIds);
       console.log(";;;Producers", existingProducers);
 
       callback({ status: true });
@@ -161,8 +171,7 @@ export default function initSocket(server: HttpServer): Server {
         const room = mediaNamespace.adapter.rooms.get(sessionCode);
         console.log(
           "ROOM MEMBERS:",
-          room ? [...room] : "NO ROOM",
-          getAllProducers(socket.id)
+          room ? [...room] : "NO ROOM"
         );
         socket.to(sessionCode).except(socket.id).emit("new-producer", {
           producerId: producer.id,

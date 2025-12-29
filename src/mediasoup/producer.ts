@@ -45,11 +45,12 @@ export async function createProducer(
 }
 
 //Get all producers except requester  & Used when a user joins
-export function getAllProducers(excludeSocketId: string) {
+export function getAllProducers(socketIds: string[]) {
   const list: { producerId: string; socketId: string }[] = [];
+  const socketIdSet = new Set(socketIds);
 
   for (const [socketId, socketProducers] of producers.entries()) {
-    if (socketId === excludeSocketId) continue;
+    if (!socketIdSet.has(socketId)) continue;
 
     for (const producer of socketProducers.values()) {
       list.push({
