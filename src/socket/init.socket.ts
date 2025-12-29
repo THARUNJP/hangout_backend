@@ -175,6 +175,7 @@ export default function initSocket(server: HttpServer): Server {
         socket.to(sessionCode).except(socket.id).emit("new-producer", {
           producerId: producer.id,
           kind: producer.kind,
+          socketId: socket.id
         });
         callback({ status: true, id: producer.id });
       } catch (err: any) {

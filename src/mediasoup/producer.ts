@@ -55,6 +55,7 @@ export function getAllProducers(socketIds: string[]) {
     for (const producer of socketProducers.values()) {
       list.push({
         producerId: producer.id,
+        // kind:producer.kind,
         socketId,
       });
     }
