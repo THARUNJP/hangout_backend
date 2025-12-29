@@ -20,6 +20,7 @@ import {
   getAllProducers,
   getRouter,
   getTransport,
+  resumeConsumer,
 } from "../mediasoup";
 import { producers } from "../mediasoup/producer";
 
@@ -225,6 +226,14 @@ export default function initSocket(server: HttpServer): Server {
       } catch (err: any) {
         console.error("consume failed:", err);
         callback({ status: false, message: err.message });
+      }
+    });
+
+    socket.on("resume-consumer", async ({ consumerId }) => {
+      try {
+        await resumeConsumer(socket.id, consumerId);
+      } catch (err: unknown) {
+        console.log("error in resuming the consumer", err);
       }
     });
   });
