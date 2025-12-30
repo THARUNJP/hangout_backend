@@ -10,10 +10,12 @@ import {
 export const handleJoinUser = (
   sessionCode: string,
   name: string,
-  socketId: string
+  socketId: string,
+  userId: string
 ) => {
   const io = getIO();
   const participantData = {
+    userId,
     socketId,
     name,
     role: SessionRole.USER,
@@ -88,5 +90,3 @@ export const handleLeaveSession = (sessionCode: string, socketId: string) => {
     console.log(`Session ${sessionCode} deleted (empty)`);
   }
 };
-
-

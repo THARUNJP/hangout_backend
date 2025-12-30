@@ -46,20 +46,21 @@ export default function initSocket(server: HttpServer): Server {
     });
 
     // join session
-    socket.on("join-session", ({ sessionCode, participantName }) => {
+    socket.on("join-session", ({ sessionCode, participantName, userId }) => {
       console.log(
         "joining session",
         sessionCode,
         "name::",
         participantName,
-        socket.id
+        socket.id,
+        userId
       );
       // Prevent duplicate joins
       if (socket.rooms.has(sessionCode)) return;
       // Join transport room first
       socket.join(sessionCode);
       // Then update business state
-      handleJoinUser(sessionCode, participantName, socket.id);
+      handleJoinUser(sessionCode, participantName, socket.id,userId);
     });
 
     //leave session
@@ -175,7 +176,7 @@ export default function initSocket(server: HttpServer): Server {
         socket.to(sessionCode).except(socket.id).emit("new-producer", {
           producerId: producer.id,
           kind: producer.kind,
-          socketId: socket.id
+          socketId: socket.id,
         });
         callback({ status: true, id: producer.id });
       } catch (err: any) {
