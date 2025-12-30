@@ -23,6 +23,7 @@ export enum SessionStatus {
 }
 
 export interface Participant {
+  userId:string
   socketId: string;          // unique per connection
   name: string;              // participant name
   role: SessionRole     // participant role
