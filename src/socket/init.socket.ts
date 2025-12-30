@@ -4,6 +4,7 @@ import {
   handleDisconnectedUser,
   handleJoinUser,
   handleLeaveSession,
+  handleMediaUserTrack,
   handleSessionCreation,
 } from "../service/socket.service";
 import {
@@ -60,7 +61,7 @@ export default function initSocket(server: HttpServer): Server {
       // Join transport room first
       socket.join(sessionCode);
       // Then update business state
-      handleJoinUser(sessionCode, participantName, socket.id,userId);
+      handleJoinUser(sessionCode, participantName, socket.id, userId);
     });
 
     //leave session
@@ -82,12 +83,14 @@ export default function initSocket(server: HttpServer): Server {
 
   mediaNamespace.on("connection", (socket) => {
     console.log("Mediasoup socket connected:", socket.id);
-    socket.on("join-media", ({ sessionCode }, callback) => {
+    socket.on("join-media", ({ sessionCode, userId }, callback) => {
       if (!sessionCode) {
         return callback({ status: false, message: "sessionCode required" });
       }
       socket.join(sessionCode);
       console.log(socket.id, "media joined success", sessionCode, socket.rooms);
+
+      handleMediaUserTrack(userId, sessionCode, socket.id);
 
       socket.data.sessionCode = sessionCode;
       const room = mediaNamespace.adapter.rooms.get(sessionCode);

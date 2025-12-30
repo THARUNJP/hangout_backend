@@ -25,6 +25,7 @@ export enum SessionStatus {
 export interface Participant {
   userId:string
   socketId: string;          // unique per connection
+  mediaId?:string;
   name: string;              // participant name
   role: SessionRole     // participant role
   joinedAt: Date;

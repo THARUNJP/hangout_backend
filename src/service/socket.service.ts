@@ -32,6 +32,21 @@ export const handleJoinUser = (
   // needs to do api call for inserting in db
 };
 
+export const handleMediaUserTrack = (
+  userId: string,
+  sessionCode: string,
+  socketId: string
+) => {
+  const session = sessionsMap.get(sessionCode);
+  if (!session?.participants) return;
+  for (let participant of session?.participants.values()) {
+    if (participant.userId === userId) {
+      participant.mediaId = socketId;
+    }
+  }
+    console.log(session, "?l");
+
+};
 export const handleSessionCreation = (
   sessionCode: string,
   call_type: SessionCallType
