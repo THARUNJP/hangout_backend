@@ -1,5 +1,6 @@
 import { Producer, RtpParameters } from "mediasoup/node/lib/types";
 import { getTransport } from "./transport";
+import { getUserIdByMediaSocketId } from "../lib/helper";
 
 export const producers = new Map<string, Map<string, Producer>>();
 
@@ -45,23 +46,34 @@ export async function createProducer(
 }
 
 //Get all producers except requester  & Used when a user joins
-export function getAllProducers(socketIds: string[]) {
-  const list: { producerId: string; socketId: string }[] = [];
+export function getAllProducers(
+  socketIds: string[],
+  sessionCode: string
+): { producerId: string; userId: string }[] {
+  const result: {
+    producerId: string;
+    userId: string;
+    kind: "audio" | "video";
+  }[] = [];
   const socketIdSet = new Set(socketIds);
 
-  for (const [socketId, socketProducers] of producers.entries()) {
-    if (!socketIdSet.has(socketId)) continue;
+  for (const socketId of socketIdSet) {
+    const socketProducers = producers.get(socketId);
+    if (!socketProducers) continue;
+
+    const userId = getUserIdByMediaSocketId(socketId, sessionCode);
+    if (!userId) continue;
 
     for (const producer of socketProducers.values()) {
-      list.push({
+      result.push({
         producerId: producer.id,
-        // kind:producer.kind,
-        socketId,
+        userId,
+        kind: producer.kind,
       });
     }
   }
 
-  return list;
+  return result;
 }
 
 //Get producer by id

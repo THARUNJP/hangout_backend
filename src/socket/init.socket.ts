@@ -23,7 +23,6 @@ import {
   getTransport,
   resumeConsumer,
 } from "../mediasoup";
-import { producers } from "../mediasoup/producer";
 
 let io: Server;
 
@@ -93,6 +92,7 @@ export default function initSocket(server: HttpServer): Server {
       handleMediaUserTrack(userId, sessionCode, socket.id);
 
       socket.data.sessionCode = sessionCode;
+      socket.data.userId = userId;
       const room = mediaNamespace.adapter.rooms.get(sessionCode);
       const peerSocketIds: string[] = [];
 
@@ -103,7 +103,7 @@ export default function initSocket(server: HttpServer): Server {
           }
         }
       }
-      const existingProducers = getAllProducers(peerSocketIds);
+      const existingProducers = getAllProducers(peerSocketIds, sessionCode);
       console.log(";;;Producers", existingProducers);
 
       callback({ status: true, producers: existingProducers });
@@ -179,7 +179,7 @@ export default function initSocket(server: HttpServer): Server {
         socket.to(sessionCode).except(socket.id).emit("new-producer", {
           producerId: producer.id,
           kind: producer.kind,
-          socketId: socket.id,
+          userId: socket.data.userId,
         });
         callback({ status: true, id: producer.id });
       } catch (err: any) {

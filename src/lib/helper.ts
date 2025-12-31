@@ -1,3 +1,4 @@
+import { sessionsMap } from "../config/sessionStore";
 import { SessionCallType } from "../types/types";
 import { CHARS } from "./constant";
 
@@ -25,3 +26,19 @@ export function getMaxParticipants(callType: SessionCallType): number {
       return 5;
   }
 }
+
+export const getUserIdByMediaSocketId = (
+  mediaId: string,
+  sessionCode: string
+): string | null => {
+  const session = sessionsMap.get(sessionCode);
+  if (!session) return null;
+
+  for (const participant of session.participants.values()) {
+    if (participant.mediaId === mediaId) {
+      return participant.userId;
+    }
+  }
+
+  return null;
+};
