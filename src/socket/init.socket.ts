@@ -173,9 +173,6 @@ export default function initSocket(server: HttpServer): Server {
 
         const { sessionCode } = socket.data;
         const producer = await createProducer(socket.id, kind, rtpParameters);
-        console.log("........comes here produce-transport ......2");
-        const room = mediaNamespace.adapter.rooms.get(sessionCode);
-        console.log("ROOM MEMBERS:", room ? [...room] : "NO ROOM");
         socket.to(sessionCode).except(socket.id).emit("new-producer", {
           producerId: producer.id,
           kind: producer.kind,
