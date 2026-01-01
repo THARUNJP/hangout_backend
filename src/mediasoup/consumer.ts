@@ -67,6 +67,9 @@ export async function resumeConsumer(socketId: string, consumerId: string) {
   if (!consumer) throw new Error("Consumer not found");
 
   await consumer.resume();
+  if (consumer.kind === "video") {
+    await consumer.requestKeyFrame();
+  }
 }
 
 /**
