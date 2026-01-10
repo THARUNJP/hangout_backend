@@ -99,7 +99,7 @@ export async function validateSessionByCode(
       status: true,
       message: "Valid meeting code",
       data: {
-        session_id: session.id,
+        id: session.id,
       },
     });
   } catch (err: any) {
