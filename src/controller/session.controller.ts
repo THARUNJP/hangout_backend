@@ -54,7 +54,7 @@ export async function createSession(
   }
 }
 
-export async function getSessionById(
+export async function validateSessionByCode(
   req: Request,
   res: Response
 ): Promise<Response> {
