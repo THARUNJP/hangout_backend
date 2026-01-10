@@ -1,9 +1,12 @@
 import { Request, Response } from "express";
-import { SessionCallType, SessionStatus } from "../types/types";
+import { SessionCallType } from "../types/types";
 import { generateSessionCode, getMaxParticipants } from "../lib/helper";
-import executeQuery from "../config/db.config";
+import * as SessionService from "../service/session.service";
 
-async function createSession(req: Request, res: Response): Promise<Response> {
+export async function createSession(
+  req: Request,
+  res: Response
+): Promise<Response> {
   try {
     const { hostName, callType, userId } = req.body as {
       hostName?: string;
@@ -11,15 +14,13 @@ async function createSession(req: Request, res: Response): Promise<Response> {
       userId?: string;
     };
 
-    // Basic validation
     if (!hostName || !callType || !userId) {
       return res.status(400).json({
         status: false,
-        message: "hostName and callType and userID are required",
+        message: "hostName, callType and userId are required",
       });
     }
 
-    // Enum validation
     if (!Object.values(SessionCallType).includes(callType)) {
       return res.status(400).json({
         status: false,
@@ -30,33 +31,18 @@ async function createSession(req: Request, res: Response): Promise<Response> {
     const sessionCode = generateSessionCode();
     const maxParticipants = getMaxParticipants(callType);
 
-    const result = await executeQuery(
-      `
-      INSERT INTO sessions (
-        session_code,
-        call_type,
-        max_participants,
-        host_name,
-        status,
-        participant_uid
-      )
-      VALUES ($1, $2, $3, $4, $5, $6)
-      RETURNING id, session_code, call_type, max_participants, host_name, status, created_at
-      `,
-      [
-        sessionCode,
-        callType,
-        maxParticipants,
-        hostName,
-        SessionStatus.ACTIVE,
-        userId,
-      ]
-    );
+    const session = await SessionService.createSession({
+      sessionCode,
+      callType,
+      maxParticipants,
+      hostName,
+      userId,
+    });
 
     return res.status(201).json({
       status: true,
       message: "Session created successfully",
-      data: result.rows[0],
+      data: session,
     });
   } catch (error) {
     console.error("Create Session Error:", error);
@@ -68,4 +54,49 @@ async function createSession(req: Request, res: Response): Promise<Response> {
   }
 }
 
-export { createSession };
+export async function getSessionById(
+  req: Request,
+  res: Response
+): Promise<Response> {
+  try {
+    const { code } = req.params;
+
+    if (!code || !code.trim()) {
+      return res.status(400).json({
+        status: false,
+        message: "Session code is required",
+      });
+    }
+
+    const session = await SessionService.getByCode(code.trim());
+
+    if (!session) {
+      return res.status(404).json({
+        status: false,
+        message: "Invalid meeting code",
+      });
+    }
+
+    if (!session.is_active) {
+      return res.status(410).json({
+        status: false,
+        message: "This meeting has expired",
+      });
+    }
+
+    return res.status(200).json({
+      status: true,
+      message: "Valid meeting code",
+      data: {
+        session_id: session.id,
+      },
+    });
+  } catch (err: any) {
+    console.error("getSessionById error:", err);
+
+    return res.status(500).json({
+      status: false,
+      message: "Internal server error",
+    });
+  }
+}

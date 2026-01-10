@@ -44,3 +44,13 @@ export interface WebRtcTransportInfo {
   iceCandidates: IceCandidate[];
   dtlsParameters: DtlsParameters;
 }
+
+
+
+export interface CreateSessionPayload {
+  sessionCode: string;
+  callType: SessionCallType;
+  maxParticipants: number;
+  hostName: string;
+  userId: string;
+}
