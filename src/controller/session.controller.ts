@@ -1,6 +1,10 @@
 import { Request, Response } from "express";
 import { SessionCallType } from "../types/types";
-import { generateSessionCode, getMaxParticipants } from "../lib/helper";
+import {
+  generateSessionCode,
+  getMaxParticipants,
+  isValidateSessionCode,
+} from "../lib/helper";
 import * as SessionService from "../service/session.service";
 
 export async function createSession(
@@ -68,12 +72,19 @@ export async function validateSessionByCode(
       });
     }
 
+    if (!isValidateSessionCode(code)) {
+      return res.status(400).json({
+        status: false,
+        message: "Session code is Invalid",
+      });
+    }
+
     const session = await SessionService.getByCode(code.trim());
 
     if (!session) {
       return res.status(404).json({
         status: false,
-        message: "Invalid meeting code",
+        message: "No session found",
       });
     }
 

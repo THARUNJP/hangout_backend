@@ -10,6 +10,11 @@ function randomPart(length: number): string {
   return result;
 }
 
+export const isValidateSessionCode = (code: string): boolean => {
+  const strictRegex = /^[a-z]{3}-[a-z]{4}-[a-z]{3}$/;
+  return strictRegex.test(code.trim());
+};
+
 export function generateSessionCode(): string {
   return `${randomPart(3)}-${randomPart(4)}-${randomPart(3)}`;
 }
