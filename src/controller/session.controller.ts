@@ -12,13 +12,12 @@ export async function createSession(
   res: Response
 ): Promise<Response> {
   try {
-    const { hostName, callType, userId } = req.body as {
-      hostName?: string;
+    const { callType, userId } = req.body as {
       callType?: SessionCallType;
       userId?: string;
     };
 
-    if (!hostName || !callType || !userId) {
+    if (!callType || !userId) {
       return res.status(400).json({
         status: false,
         message: "hostName, callType and userId are required",
@@ -39,7 +38,6 @@ export async function createSession(
       sessionCode,
       callType,
       maxParticipants,
-      hostName,
       userId,
     });
 
@@ -84,7 +82,7 @@ export async function validateSessionByCode(
     if (!session) {
       return res.status(404).json({
         status: false,
-        message: "No session found",
+        message: "No session found, please try with a valid one",
       });
     }
 
@@ -104,7 +102,6 @@ export async function validateSessionByCode(
     });
   } catch (err: any) {
     console.error("getSessionById error:", err);
-
     return res.status(500).json({
       status: false,
       message: "Internal server error",

@@ -1,5 +1,9 @@
 import executeQuery from "../config/db.config";
-import { CreateSessionPayload, SessionCallType, SessionStatus } from "../types/types";
+import {
+  CreateSessionPayload,
+  SessionCallType,
+  SessionStatus,
+} from "../types/types";
 
 export const getByCode = async (
   sessionCode: string
@@ -18,24 +22,21 @@ export const getByCode = async (
   return rows[0];
 };
 
-
 export async function createSession(payload: CreateSessionPayload) {
   const query = `
     INSERT INTO sessions (
       session_code,
       call_type,
       max_participants,
-      host_name,
       status,
       participant_uid
     )
-    VALUES ($1, $2, $3, $4, $5, $6)
+    VALUES ($1, $2, $3, $4, $5)
     RETURNING 
       id, 
       session_code, 
       call_type, 
       max_participants, 
-      host_name, 
       status, 
       created_at
   `;
@@ -44,7 +45,6 @@ export async function createSession(payload: CreateSessionPayload) {
     payload.sessionCode,
     payload.callType,
     payload.maxParticipants,
-    payload.hostName,
     SessionStatus.ACTIVE,
     payload.userId,
   ];
@@ -53,4 +53,3 @@ export async function createSession(payload: CreateSessionPayload) {
 
   return rows[0];
 }
-
