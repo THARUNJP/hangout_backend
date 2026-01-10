@@ -1,4 +1,5 @@
 import pkg from "pg";
+import fs from "fs"
 const { Pool } = pkg;
 
 // Create a singleton pool
@@ -11,6 +12,10 @@ const pool = new Pool({
   max: 10,
   idleTimeoutMillis: 30000,
   connectionTimeoutMillis: 5000,
+ ssl: {
+    rejectUnauthorized: true,
+    ca:process.env.DB_SSL_CA!.replace(/\\n/g, "\n"),
+  },
 });
 
 // Helper function to execute queries

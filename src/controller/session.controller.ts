@@ -3,21 +3,19 @@ import { SessionCallType, SessionStatus } from "../types/types";
 import { generateSessionCode, getMaxParticipants } from "../lib/helper";
 import executeQuery from "../config/db.config";
 
-async function createSession(
-  req: Request,
-  res: Response
-): Promise<Response> {
+async function createSession(req: Request, res: Response): Promise<Response> {
   try {
-    const { hostName, callType } = req.body as {
+    const { hostName, callType, userId } = req.body as {
       hostName?: string;
       callType?: SessionCallType;
+      userId?: string;
     };
 
     // Basic validation
-    if (!hostName || !callType) {
+    if (!hostName || !callType || !userId) {
       return res.status(400).json({
         status: false,
-        message: "hostName and callType are required",
+        message: "hostName and callType and userID are required",
       });
     }
 
@@ -39,12 +37,20 @@ async function createSession(
         call_type,
         max_participants,
         host_name,
-        status
+        status,
+        participant_uid
       )
-      VALUES ($1, $2, $3, $4, $5)
+      VALUES ($1, $2, $3, $4, $5, $6)
       RETURNING id, session_code, call_type, max_participants, host_name, status, created_at
       `,
-      [sessionCode, callType, maxParticipants, hostName, SessionStatus.ACTIVE]
+      [
+        sessionCode,
+        callType,
+        maxParticipants,
+        hostName,
+        SessionStatus.ACTIVE,
+        userId,
+      ]
     );
 
     return res.status(201).json({
