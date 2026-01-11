@@ -9,7 +9,6 @@ import {
 } from "../service/socket.service";
 import {
   createRouterSession,
-  getProducers,
   handleCreateSendTransport,
   handleGetRtpCapabilities,
 } from "../service/media.service";
@@ -20,7 +19,6 @@ import {
   createRecvTransport,
   getAllProducers,
   getRouter,
-  getTransport,
   resumeConsumer,
 } from "../mediasoup";
 
@@ -29,11 +27,10 @@ let io: Server;
 export default function initSocket(server: HttpServer): Server {
   io = new Server(server, {
     cors: {
-      origin: "http://localhost:5173",
+      origin: "https://hangout-rho.vercel.app/",
       methods: ["GET", "POST"],
     },
   });
-  console.log("socket is running on port 8000");
 
   io.on("connection", (socket) => {
     console.log("Socket connected:", socket.id);
