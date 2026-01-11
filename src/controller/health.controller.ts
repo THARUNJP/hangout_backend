@@ -7,6 +7,7 @@ async function healthz(_req: Request, res: Response): Promise<Response> {
       uptime: process.uptime(),
       message: "Service is healthy",
       timestamp: new Date().toISOString(),
+      public_ip: process.env.PUBLIC_IP,
     };
     return res.status(200).json(health);
   } catch (error: unknown) {
@@ -20,4 +21,4 @@ async function healthz(_req: Request, res: Response): Promise<Response> {
   }
 }
 
-export {healthz}
+export { healthz };
