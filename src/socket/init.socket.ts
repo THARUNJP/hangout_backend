@@ -27,7 +27,7 @@ let io: Server;
 export default function initSocket(server: HttpServer): Server {
   io = new Server(server, {
     cors: {
-      origin: "https://hangout-rho.vercel.app/",
+      origin: process.env.CLIENT_URL,
       methods: ["GET", "POST"],
     },
   });

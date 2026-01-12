@@ -21,8 +21,16 @@ async function bootstrap() {
     initSocket(server);
 
     // 4️ start server
-    server.listen(PORT, "0.0.0.0", () => {
-      console.log(`Server running on port ${PORT}`);
+    // 4. Start server
+    const isProd = process.env.NODE_ENV === "production";
+    const host = isProd ? "0.0.0.0" : "localhost";
+
+    server.listen(PORT, host, () => {
+      console.log(
+        `Server running in ${
+          isProd ? "production" : "development"
+        } mode at http://${host}:${PORT}`
+      );
     });
   } catch (err) {
     console.error("Failed to bootstrap server:", err);

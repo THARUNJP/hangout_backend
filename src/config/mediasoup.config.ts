@@ -8,7 +8,7 @@ import { WorkerLogLevel, WorkerLogTag } from "../mediasoup/types";
  * No business logic here.
  */
 
-export const mediasoupConfig  = {
+export const mediasoupConfig = {
   /**
    * Worker settings
    * One worker can handle multiple routers (sessions)
@@ -22,14 +22,7 @@ export const mediasoupConfig  = {
      * In production, reduce this
      */
     logLevel: "warn" as WorkerLogLevel,
-    logTags: [
-      "info",
-      "ice",
-      "dtls",
-      "rtp",
-      "srtp",
-      "rtcp",
-    ] as WorkerLogTag[],
+    logTags: ["info", "ice", "dtls", "rtp", "srtp", "rtcp"] as WorkerLogTag[],
   },
 
   /**
@@ -69,7 +62,7 @@ export const mediasoupConfig  = {
     listenIps: [
       {
         ip: "0.0.0.0",
-        announcedIp: process.env.PUBLIC_IP || '127.0.0.1',
+        announcedIp: process.env.PUBLIC_IP || "127.0.0.1",
       },
     ],
     enableUdp: true,
