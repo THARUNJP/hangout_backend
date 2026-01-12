@@ -20,7 +20,6 @@ async function bootstrap() {
     // 3 init socket.io
     initSocket(server);
 
-    // 4️ start server
     // 4. Start server
     const isProd = process.env.NODE_ENV === "production";
     const host = isProd ? "0.0.0.0" : "localhost";
