@@ -27,6 +27,7 @@ export const handleJoinUser = (
 
   io.to(sessionCode).emit("participants-updated", {
     participants: Array.from(session.participants.values()),
+    userId,
     message: `${name ?? "A user"} has joined the session`,
   });
   // needs to do api call for inserting in db
