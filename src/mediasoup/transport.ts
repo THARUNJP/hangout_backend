@@ -19,6 +19,11 @@ export async function createWebRtcTransport(
       mediasoupConfig.webRtcTransport.initialAvailableOutgoingBitrate,
   });
 
+  console.log(
+    "Mediasoup announcedIp:",
+    mediasoupConfig.webRtcTransport.listenIps[0].announcedIp
+  );
+
   await transport.setMaxIncomingBitrate(
     mediasoupConfig.webRtcTransport.minimumAvailableOutgoingBitrate
   );
