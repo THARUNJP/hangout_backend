@@ -27,8 +27,7 @@ let io: Server;
 export default function initSocket(server: HttpServer): Server {
   io = new Server(server, {
     cors: {
-      // origin: process.env.CLIENT_URL,
-      origin:"*",
+      origin: process.env.CLIENT_URL,
       methods: ["GET", "POST"],
     },
   });
