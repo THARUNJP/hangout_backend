@@ -22,10 +22,15 @@ export async function createRouter(
     mediaCodecs: mediasoupConfig.router.mediaCodecs,
   });
 
+  (router as any).appData = { worker };
+
   routers.set(sessionCode, router);
+
+  console.log(`Router created for session ${sessionCode} on worker ${worker.pid}`);
 
   return router;
 }
+
 
 /**
  * Get existing router by sessionCode
