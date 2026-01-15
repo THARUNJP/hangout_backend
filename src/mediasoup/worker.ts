@@ -8,9 +8,7 @@ let nextWorkerIndex = 0;
 
 export default async function createMediasoupWorkers(): Promise<void> {
   const { numWorkers, worker } = mediasoupConfig;
-
   console.log(`Starting ${numWorkers} mediasoup workers...`);
-  console.log("Public IP:", process.env.PUBLIC_IP);
 
   for (let i = 0; i < numWorkers; i++) {
     const mediaWorker = await mediasoup.createWorker({
@@ -21,40 +19,15 @@ export default async function createMediasoupWorkers(): Promise<void> {
     });
 
     mediaWorker.on("died", () => {
-      console.error("Mediasoup worker died. Exiting...");
+      console.error(
+        "Mediasoup worker died. Exiting process to allow restart..."
+      );
       setTimeout(() => process.exit(1), 2000);
     });
 
-    const webRtcServer = await mediaWorker.createWebRtcServer({
-      listenInfos: [
-        {
-          protocol: "udp",
-          ip: "0.0.0.0",
-          announcedAddress: process.env.PUBLIC_IP, // EC2 public IP
-          portRange: {
-            min: worker.rtcMinPort,
-            max: worker.rtcMaxPort,
-          },
-        },
-        {
-          protocol: "tcp",
-          ip: "0.0.0.0",
-          announcedAddress: process.env.PUBLIC_IP,
-          portRange: {
-            min: worker.rtcMinPort,
-            max: worker.rtcMaxPort,
-          },
-        },
-      ],
-    });
-
-    (mediaWorker as any).appData = { webRtcServer };
-
-    console.log(
-      `Mediasoup worker ${i} ready [pid:${mediaWorker.pid}] WebRTC on ${process.env.PUBLIC_IP}`
-    );
-
     workers.push(mediaWorker);
+
+    console.log(`Mediasoup worker ${i} created [pid:${mediaWorker.pid}]`);
   }
 }
 

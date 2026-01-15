@@ -8,12 +8,10 @@ export const transports = new Map<
 >();
 // create transport
 export async function createWebRtcTransport(
-  router: Router,
-  worker: Worker
+  router: Router
 ): Promise<WebRtcTransport> {
   const transport = await router.createWebRtcTransport({
-    // listenIps: mediasoupConfig.webRtcTransport.listenIps,
-    webRtcServer: (worker as any).appData.webRtcServer,
+    listenIps: mediasoupConfig.webRtcTransport.listenIps,
     enableUdp: mediasoupConfig.webRtcTransport.enableUdp,
     enableTcp: mediasoupConfig.webRtcTransport.enableTcp,
     preferUdp: mediasoupConfig.webRtcTransport.preferUdp,
@@ -38,9 +36,7 @@ export async function createSendTransport(
   socketId: string,
   router: Router
 ): Promise<WebRtcTransportInfo> {
-  const worker = router.appData.worker;
-
-  const transport = await createWebRtcTransport(router, worker as any);
+  const transport = await createWebRtcTransport(router);
 
   const entry = transports.get(socketId) || {};
   entry.send = transport;
@@ -59,8 +55,7 @@ export async function createRecvTransport(
   socketId: string,
   router: Router
 ): Promise<WebRtcTransportInfo> {
-  const worker = router.appData.worker;
-  const transport = await createWebRtcTransport(router, worker as any);
+  const transport = await createWebRtcTransport(router);
 
   const entry = transports.get(socketId) || {};
   entry.recv = transport;
